@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use Illuminate\Http\Request;
-use App\Models\Product;
 
-class ProductController extends Controller
+class BlogController extends Controller
 {
-    // Hiển thị danh sách sản phẩm dưới dạng API
     public function index()
     {
-        $products = Product::all();
+        $products = Blog::all();
         return response()->json($products);
     }
 
@@ -19,9 +18,8 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
@@ -32,9 +30,8 @@ class ProductController extends Controller
             $imageName = null;
         }
 
-        $product = Product::create([
+        $product = Blog::create([
             'name' => $request->name,
-            'price' => $request->price,
             'description' => $request->description,
             'image' => $imageName,
         ]);
@@ -45,7 +42,7 @@ class ProductController extends Controller
     // Hiển thị thông tin sản phẩm cụ thể dưới dạng API
     public function show($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Blog::findOrFail($id);
         return response()->json($product);
     }
 
@@ -54,12 +51,11 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|max:2048'
         ]);
 
-        $product = Product::findOrFail($id);
+        $product = Blog::findOrFail($id);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -69,7 +65,6 @@ class ProductController extends Controller
         }
 
         $product->name = $request->name;
-        $product->price = $request->price;
         $product->description = $request->description;
         $product->save();
 
@@ -79,7 +74,7 @@ class ProductController extends Controller
     // Xóa sản phẩm khỏi cơ sở dữ liệu
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Blog::findOrFail($id);
         $product->delete();
 
         return response()->json(null, 204);
