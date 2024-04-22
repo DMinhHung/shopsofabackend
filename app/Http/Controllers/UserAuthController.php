@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\Sanctum;
 
 class UserAuthController extends Controller
 {
@@ -53,10 +54,20 @@ class UserAuthController extends Controller
 
     public function userlogout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
 
+        $user = $request->user();
+
+        if ($user) {
+            $token = $user->currentAccessToken();
+            if ($token && $token->tokenable_id === $user->id) {
+                $token->delete();
+                return response()->json([
+                    'message' => 'Logged out successfully'
+                ]);
+            }
+        }
         return response()->json([
-            'message' => 'Logged out successfully'
-        ]);
+            'message' => 'Logout failed: Invalid token'
+        ], 401);
     }
 }

@@ -29,7 +29,6 @@ Route::post('register', [UserAuthController::class, 'userRegister']);
 Route::post('login', [UserAuthController::class, 'userLogin']);
 Route::post('logout', [UserAuthController::class, 'userlogout'])
     ->middleware('auth:sanctum');
-
 //Login,Register
 //user
 Route::get('/usergetproducts', [ProductUserController::class, 'index']);
