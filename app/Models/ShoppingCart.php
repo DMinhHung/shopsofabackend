@@ -12,7 +12,7 @@ class ShoppingCart extends Model
 
     // Các trường dữ liệu có thể được gán
     protected $fillable = [
-        'productId', 'quantity', 'total',
+        'productId', 'userId', 'quantity', 'total',
     ];
 
     public function getProductId($productId)
@@ -22,6 +22,15 @@ class ShoppingCart extends Model
     public function setProductId($productId)
     {
         $this->attributes['productId'] = ($productId);
+    }
+
+    public function getUserId($userId)
+    {
+        return $userId;
+    }
+    public function setUserId($userId)
+    {
+        $this->attributes['userId'] = ($userId);
     }
 
     public function getQuantity($quantity)

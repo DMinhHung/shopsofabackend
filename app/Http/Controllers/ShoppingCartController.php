@@ -5,31 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\ShoppingCart;
 use App\Models\Product; // Import model Product
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ShoppingCartController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
     public function index()
     {
+        $userId = Auth::id();
         $cartItems = ShoppingCart::join('products', 'shoppingcart.productId', '=', 'products.id')
-            ->select('shoppingcart.*', 'products.name', 'products.image', 'products.price')
+            ->join('users', 'shoppingcart.userId', '=', 'users.id')
+            ->where('shoppingcart.userId', '=', $userId)
+            ->select('shoppingcart.*', 'products.name as product_name', 'products.image', 'products.price', 'users.name as user_name', 'users.email', 'users.phone', 'users.address')
             ->get();
 
         return response()->json($cartItems);
     }
     public function addToCart(Request $request)
     {
-        // Validate request
+        $userId = Auth::id();
+
         $request->validate([
             'productId' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
         try {
+
             $productId = $request->input('productId');
             $quantity = $request->input('quantity');
 
             $product = Product::findOrFail($productId);
 
             ShoppingCart::create([
+                'userId' => $userId,
                 'productId' => $productId,
                 'quantity' => $quantity,
                 'total' => $product->price * $quantity,

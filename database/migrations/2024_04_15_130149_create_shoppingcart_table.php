@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('productId');
             $table->foreign('productId')->references('id')->on('products');
+            $table->unsignedBigInteger('userId');
+            $table->foreign('userId')->references('id')->on('users');
             $table->integer('quantity');
             $table->integer('total');
             $table->timestamps();

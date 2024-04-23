@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -75,27 +76,29 @@ class ProductAdminController extends Controller
         return response()->json($product, 201);
     }
 
-    // Cập nhật thông tin sản phẩm trong cơ sở dữ liệu
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-
-        // Xóa ảnh chính cũ (nếu có)
         if ($request->hasFile('image')) {
             if ($product->image) {
-                Storage::delete($product->image);
+                // Xóa ảnh chính cũ
+                $imagePath = public_path($product->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
             $image = $request->file('image');
             $imageName = uniqid() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
             $product->image = 'images/' . $imageName;
         }
-
-        // Xóa các ảnh phụ cũ (nếu có)
         foreach (['imagep1', 'imagep2', 'imagep3', 'imagep4'] as $field) {
             if ($request->hasFile($field)) {
                 if ($product->{$field}) {
-                    Storage::delete($product->{$field});
+                    $imagePath = public_path($product->{$field});
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
                 }
                 $image = $request->file($field);
                 $imageName = uniqid() . '_' . $image->getClientOriginalName();
@@ -103,12 +106,14 @@ class ProductAdminController extends Controller
                 $product->{$field} = 'images/' . $imageName;
             } elseif ($request->input($field) === null) {
                 if ($product->{$field}) {
-                    Storage::delete($product->{$field});
+                    $imagePath = public_path($product->{$field});
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
                     $product->{$field} = null;
                 }
             }
         }
-
         $product->update([
             'name' => $request->name,
             'price' => $request->price,
@@ -122,9 +127,6 @@ class ProductAdminController extends Controller
 
         return response()->json($product);
     }
-
-
-    // Xóa sản phẩm khỏi cơ sở dữ liệu
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
@@ -139,14 +141,15 @@ class ProductAdminController extends Controller
 
         // Xóa ảnh phụ nếu có
         foreach (['imagep1', 'imagep2', 'imagep3', 'imagep4'] as $field) {
-            if ($product->$field) {
-                $imagePath = public_path($product->$field);
+            if ($product->{$field}) {
+                $imagePath = public_path($product->{$field});
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
             }
         }
-
+        Log::info('Product deleted: ' . $product->id);
+        Log::info('Product deleted: ' . $product->image);
         $product->delete();
 
         return response()->json(null, 204);
