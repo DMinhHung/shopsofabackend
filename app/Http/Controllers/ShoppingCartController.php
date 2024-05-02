@@ -63,10 +63,8 @@ class ShoppingCartController extends Controller
 
                 $shoppingCart = ShoppingCart::findOrFail($id);
 
-                // Lấy thông tin sản phẩm từ bảng Products
                 $product = Product::findOrFail($shoppingCart->productId);
 
-                // Cập nhật số lượng và tổng giá trị của mỗi mục giỏ hàng
                 $shoppingCart->quantity = $quantity;
                 $shoppingCart->total = $product->price * $quantity;
                 $shoppingCart->save();

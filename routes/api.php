@@ -5,6 +5,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderProductController;
 use App\Http\Controllers\OurTeamController;
+use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\user\ProductUserController;
 use App\Http\Controllers\UserAuthController;
@@ -33,6 +34,11 @@ Route::post('/login', [UserAuthController::class, 'userLogin']);
 Route::post('/logout', [UserAuthController::class, 'userlogout'])
     ->middleware('auth:sanctum');
 //Login,Register
+
+//Payment
+Route::post('paypal', [PaypalController::class, 'paypal'])->name('paypal');
+//Payment
+
 //user
 Route::get('/usergetproducts', [ProductUserController::class, 'index']);
 Route::get('/usergetproducts/{id}', [ProductUserController::class, 'show']);
