@@ -39,14 +39,12 @@ class BlogController extends Controller
         return response()->json($product, 201);
     }
 
-    // Hiển thị thông tin sản phẩm cụ thể dưới dạng API
     public function show($id)
     {
         $product = Blog::findOrFail($id);
         return response()->json($product);
     }
 
-    // Cập nhật thông tin sản phẩm trong cơ sở dữ liệu
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -71,7 +69,6 @@ class BlogController extends Controller
         return response()->json($product);
     }
 
-    // Xóa sản phẩm khỏi cơ sở dữ liệu
     public function destroy($id)
     {
         $product = Blog::findOrFail($id);

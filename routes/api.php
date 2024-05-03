@@ -29,10 +29,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Login,Register
 /* Api Register */
 Route::get('/users', [UserAuthController::class, 'index']);
+Route::get('/getusers/{id}', [UserAuthController::class, 'show']);
 Route::post('/register', [UserAuthController::class, 'userRegister']);
 Route::post('/login', [UserAuthController::class, 'userLogin']);
 Route::post('/logout', [UserAuthController::class, 'userlogout'])
     ->middleware('auth:sanctum');
+
+//Update User Profile
+Route::post('/update/{id}', [UserAuthController::class, 'userUpdate']);
+Route::post('/avatar/{id}', [UserAuthController::class, 'userAvatar']);
+//Update User Profile
+
 //Login,Register
 
 //Payment
@@ -42,6 +49,9 @@ Route::post('paypal', [PaypalController::class, 'paypal'])->name('paypal');
 //user
 Route::get('/usergetproducts', [ProductUserController::class, 'index']);
 Route::get('/usergetproducts/{id}', [ProductUserController::class, 'show']);
+//user
+
+
 //admin
 //Product
 Route::get('/getproducts', [ProductAdminController::class, 'index']);

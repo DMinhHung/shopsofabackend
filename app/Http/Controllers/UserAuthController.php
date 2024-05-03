@@ -14,6 +14,11 @@ class UserAuthController extends Controller
         $users = User::all();
         return response()->json($users);
     }
+    public function show($id)
+    {
+        $product = User::findOrFail($id);
+        return response()->json($product);
+    }
     public function userLogin(Request $request)
     {
         $loginUserData = $request->validate([
@@ -72,5 +77,42 @@ class UserAuthController extends Controller
         return response()->json([
             'message' => 'Logout failed: Invalid token'
         ], 401);
+    }
+
+    public function userUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->save();
+
+        return response()->json(['message' => 'User updated successfully'], 200);
+    }
+    public function userAvatar(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = User::find($id);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('avatars'), $filename);
+            $user->image = $filename;
+            $user->save();
+        }
+
+        return response()->json(['message' => 'Image updated successfully'], 200);
     }
 }
