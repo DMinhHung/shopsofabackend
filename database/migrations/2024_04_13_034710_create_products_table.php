@@ -15,7 +15,7 @@
                 $table->id();
                 $table->string('name');
                 $table->integer('price');
-                $table->string('description');
+                $table->text('description');
                 $table->text('image');
                 $table->text('imagep1')->nullable();
                 $table->text('imagep2')->nullable();
@@ -25,7 +25,7 @@
                 $table->string('colorpd')->nullable();
                 $table->string('materialpd')->nullable();
                 $table->string('warrantypd')->nullable();
-                $table->string('advantage')->nullable();
+                $table->text('advantage')->nullable();
                 $table->timestamps();
             });
         }

@@ -14,7 +14,7 @@ class UserAuthController extends Controller
         $users = User::all();
         return response()->json($users);
     }
-    public function show($id)
+    public function usershow($id)
     {
         $product = User::findOrFail($id);
         return response()->json($product);
@@ -114,5 +114,18 @@ class UserAuthController extends Controller
         }
 
         return response()->json(['message' => 'Image updated successfully'], 200);
+    }
+
+    public function userUpdateRole(Request $request, $id)
+    {
+        $request->validate([
+            'role' => 'nullable|string|max:255',
+        ]);
+
+        $user = User::find($id);
+        $user->role = $request->role;
+        $user->save();
+
+        return response()->json(['message' => 'User updated successfully'], 200);
     }
 }

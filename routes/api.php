@@ -36,8 +36,10 @@ Route::post('/logout', [UserAuthController::class, 'userlogout'])
     ->middleware('auth:sanctum');
 
 //Update User Profile
+Route::get('/getuser/{id}', [UserAuthController::class, 'usershow']);
 Route::post('/update/{id}', [UserAuthController::class, 'userUpdate']);
 Route::post('/avatar/{id}', [UserAuthController::class, 'userAvatar']);
+Route::post('/updaterole/{id}', [UserAuthController::class, 'userUpdateRole']);
 //Update User Profile
 
 //Login,Register

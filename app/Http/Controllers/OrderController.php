@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\ShoppingCart;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -15,8 +16,32 @@ class OrderController extends Controller
     // GET all orders
     public function index()
     {
-        $orders = Order::all();
-        return response()->json($orders);
+        try {
+            // Sử dụng join để kết hợp các bảng và lấy thông tin cần thiết
+            $orders = DB::table('order')
+                ->join('order_product', 'order.id', '=', 'order_product.order_id')
+                ->join('users', 'order.userId', '=', 'users.id')
+                ->join('products', 'order_product.product_id', '=', 'products.id')
+                ->select(
+                    'order.id as order_id',
+                    'order.maorder as order_code',
+                    'order.date as order_date',
+                    'users.name as user_name',
+                    'users.email as user_email',
+                    'users.address as user_address',
+                    'products.id as product_id',
+                    'products.name as product_name',
+                    'products.price as product_price',
+                    'products.image as product_image'
+                )
+                ->get();
+
+            // Trả về dữ liệu dưới dạng JSON
+            return response()->json(['message' => 'Successfully retrieved orders with related user and products', 'orders' => $orders], 200);
+        } catch (\Exception $e) {
+            // Trả về thông báo lỗi nếu có lỗi xảy ra
+            return response()->json(['message' => 'Failed to retrieve orders with related user and products', 'error' => $e->getMessage()], 500);
+        }
     }
 
     // POST a new order
